@@ -1,0 +1,1218 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Carla BRUNEAU — Visite guidée de Barcelone</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&family=Caveat:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ocre: #C8863A;
+    --terracotta: #B85C38;
+    --sand: #F2E8D9;
+    --deep: #1A1209;
+    --ink: #2D2416;
+    --muted: #8A7560;
+    --accent: #4A90A4;
+    --light-sand: #FAF6F0;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--light-sand);
+    color: var(--ink);
+    font-family: 'DM Sans', sans-serif;
+    overflow-x: hidden;
+  }
+
+  /* ── PROGRESS BAR ── */
+  #progress-bar {
+    position: fixed;
+    top: 0; left: 0;
+    height: 4px;
+    width: 0%;
+    background: linear-gradient(90deg, var(--terracotta), var(--ocre));
+    z-index: 100;
+    transition: width 0.1s linear;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    position: relative;
+    background: var(--deep);
+    overflow: hidden;
+    padding: 2rem;
+  }
+
+  .hero-tiles {
+    position: absolute;
+    inset: 0;
+    opacity: 0.08;
+    background-image:
+      repeating-linear-gradient(45deg, var(--ocre) 0, var(--ocre) 1px, transparent 0, transparent 50%),
+      repeating-linear-gradient(-45deg, var(--ocre) 0, var(--ocre) 1px, transparent 0, transparent 50%);
+    background-size: 28px 28px;
+  }
+
+  .hero-arch {
+    position: absolute;
+    bottom: -2px; left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+  }
+
+  .hero-badge {
+    display: inline-block;
+    border: 1px solid var(--ocre);
+    color: var(--ocre);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 0.4rem 1.2rem;
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.2s forwards;
+  }
+
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.8rem, 7vw, 5.5rem);
+    color: var(--sand);
+    line-height: 1.05;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.4s forwards;
+  }
+
+  .hero h1 em {
+    font-style: italic;
+    color: var(--ocre);
+  }
+
+  .hero-sub {
+    font-size: 1.05rem;
+    color: var(--muted);
+    margin-top: 1.2rem;
+    max-width: 480px;
+    font-weight: 300;
+    line-height: 1.6;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.6s forwards;
+  }
+
+  .hero-scroll {
+    margin-top: 3rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--muted);
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    opacity: 0;
+    animation: fadeUp 0.8s 1s forwards;
+  }
+
+  .scroll-line {
+    width: 1px;
+    height: 48px;
+    background: linear-gradient(to bottom, var(--ocre), transparent);
+    animation: pulse 2s infinite;
+  }
+
+  /* ── ITINERARY MAP ── */
+  .itinerary {
+    background: var(--sand);
+    padding: 5rem 2rem 4rem;
+    border-bottom: 1px solid rgba(200,134,58,0.15);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .itinerary::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(circle at 20% 80%, rgba(200,134,58,0.06) 0%, transparent 50%),
+                      radial-gradient(circle at 80% 20%, rgba(184,92,56,0.05) 0%, transparent 50%);
+  }
+
+  .itinerary-header {
+    text-align: center;
+    margin-bottom: 3.5rem;
+    position: relative;
+  }
+
+  .itinerary-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.9rem;
+    color: var(--terracotta);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 0.6rem;
+  }
+
+  .itinerary-header p {
+    color: var(--muted);
+    font-size: 0.9rem;
+    font-weight: 300;
+    letter-spacing: 0.03em;
+  }
+
+  .itin-stops {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    max-width: 980px;
+    margin: 0 auto;
+    position: relative;
+    gap: 0.5rem;
+  }
+
+  /* Ligne de connexion SVG entre les stops */
+  .itin-path-wrap {
+    position: absolute;
+    top: 35px;
+    left: 36px;
+    right: 36px;
+    height: 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .itin-stop {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+    position: relative;
+    z-index: 1;
+    transition: transform 0.25s ease;
+  }
+
+  .itin-stop:hover { transform: translateY(-7px); }
+  .itin-stop:hover .itin-icon { border-color: var(--terracotta); box-shadow: 0 8px 24px rgba(184,92,56,0.2); }
+  .itin-stop:hover .itin-label { color: var(--terracotta); }
+  .itin-stop:hover .itin-num { background: var(--terracotta); }
+
+  .itin-icon {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: white;
+    border: 1.5px solid rgba(200,134,58,0.35);
+    box-shadow: 2px 4px 14px rgba(0,0,0,0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 13px;
+    transition: border-color 0.25s, box-shadow 0.25s;
+    position: relative;
+  }
+
+  .itin-icon svg { width: 100%; height: 100%; }
+
+  .itin-num {
+    position: absolute;
+    top: -6px; right: -6px;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: var(--ocre);
+    color: white;
+    font-size: 0.62rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.25s;
+    border: 2px solid var(--sand);
+  }
+
+  .itin-monument {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.7rem;
+    font-style: italic;
+    color: var(--muted);
+    margin-top: 0.55rem;
+    text-align: center;
+    line-height: 1.3;
+  }
+
+  .itin-label {
+    font-size: 0.68rem;
+    font-weight: 500;
+    color: var(--ink);
+    margin-top: 0.2rem;
+    text-align: center;
+    line-height: 1.3;
+    max-width: 90px;
+    transition: color 0.25s;
+  }
+
+  .itin-tooltip {
+    position: absolute;
+    bottom: calc(100% + 14px);
+    left: 50%;
+    transform: translateX(-50%) scale(0.92);
+    background: var(--deep);
+    color: var(--sand);
+    padding: 0.5rem 0.85rem;
+    border-radius: 8px;
+    font-size: 0.71rem;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s, transform 0.2s;
+    line-height: 1.5;
+    text-align: center;
+    border: 1px solid rgba(200,134,58,0.2);
+  }
+
+  .itin-tooltip strong { color: var(--ocre); display: block; margin-bottom: 0.1rem; }
+
+  .itin-tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%; left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-top-color: var(--deep);
+  }
+
+  .itin-stop:hover .itin-tooltip {
+    opacity: 1;
+    transform: translateX(-50%) scale(1);
+  }
+
+  /* ── TIMELINE ── */
+  .timeline {
+    position: relative;
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 4rem 1.5rem 6rem;
+  }
+
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 0; bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--ocre), var(--terracotta) 80%, transparent);
+    transform: translateX(-50%);
+  }
+
+  /* ── STOP ── */
+  .stop {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 5rem;
+    position: relative;
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+
+  .stop.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .stop:nth-child(odd) { flex-direction: row; }
+  .stop:nth-child(even) { flex-direction: row-reverse; }
+
+  /* dot on the line */
+  .stop-dot {
+    position: absolute;
+    left: 50%;
+    top: 2rem;
+    transform: translateX(-50%);
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: var(--ocre);
+    border: 3px solid var(--light-sand);
+    box-shadow: 0 0 0 2px var(--ocre);
+    z-index: 2;
+  }
+
+  .stop-icon-wrap {
+    flex: 0 0 calc(50% - 2rem);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 0.5rem;
+  }
+
+  .stop-icon {
+    width: 110px;
+    height: 110px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--sand);
+    border-radius: 50%;
+    border: 2px solid rgba(200,134,58,0.3);
+    box-shadow: 4px 6px 20px rgba(0,0,0,0.07);
+    flex-shrink: 0;
+    padding: 18px;
+  }
+
+  .stop-icon svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .stop-card {
+    flex: 0 0 calc(50% - 2rem);
+    background: white;
+    border-radius: 16px;
+    padding: 1.6rem 1.8rem;
+    box-shadow: 4px 8px 28px rgba(0,0,0,0.07);
+    border-left: 3px solid var(--ocre);
+    position: relative;
+  }
+
+  .stop:nth-child(even) .stop-card {
+    border-left: none;
+    border-right: 3px solid var(--terracotta);
+  }
+
+  .stop-number {
+    font-family: 'Caveat', cursive;
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-bottom: 0.3rem;
+  }
+
+  .stop-monument {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15rem;
+    color: var(--terracotta);
+    margin-bottom: 0.5rem;
+    font-style: italic;
+  }
+
+  .stop-role {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--deep);
+    margin-bottom: 0.15rem;
+  }
+
+  .stop-company {
+    font-size: 0.8rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .stop-company::before {
+    content: '';
+    display: inline-block;
+    width: 10px;
+    height: 13px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 13' fill='none' stroke='%238A7560' stroke-width='1' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 1C2.8 1 1 2.8 1 4.8C1 7.8 5 12 5 12C5 12 9 7.8 9 4.8C9 2.8 7.2 1 5 1Z'/%3E%3Ccircle cx='5' cy='4.8' r='1.5'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-size: contain;
+    flex-shrink: 0;
+  }
+
+  .stop-date {
+    font-size: 0.75rem;
+    color: var(--ocre);
+    font-weight: 500;
+    background: rgba(200,134,58,0.1);
+    display: inline-block;
+    padding: 0.15rem 0.6rem;
+    border-radius: 20px;
+    margin-bottom: 0.9rem;
+  }
+
+  .stop-desc {
+    font-size: 0.88rem;
+    color: #5a4d3e;
+    line-height: 1.65;
+  }
+
+  .stop-wit {
+    font-family: 'Caveat', cursive;
+    font-size: 0.95rem;
+    color: var(--ocre);
+    margin-top: 0.8rem;
+    padding-top: 0.8rem;
+    border-top: 1px dashed rgba(200,134,58,0.3);
+    font-style: italic;
+  }
+
+  /* ── ARRIVAL ── */
+  .arrival {
+    text-align: center;
+    padding: 5rem 2rem 6rem;
+    background: var(--deep);
+    color: var(--sand);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .arrival-tiles {
+    position: absolute;
+    inset: 0;
+    opacity: 0.05;
+    background-image:
+      repeating-linear-gradient(45deg, var(--ocre) 0, var(--ocre) 1px, transparent 0, transparent 50%),
+      repeating-linear-gradient(-45deg, var(--ocre) 0, var(--ocre) 1px, transparent 0, transparent 50%);
+    background-size: 28px 28px;
+  }
+
+  .arrival h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.2rem;
+    color: var(--ocre);
+    margin-bottom: 1rem;
+    position: relative;
+  }
+
+  .arrival p {
+    max-width: 520px;
+    margin: 0 auto 2rem;
+    color: var(--muted);
+    line-height: 1.7;
+    position: relative;
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    justify-content: center;
+    position: relative;
+  }
+
+  .tag {
+    background: rgba(200,134,58,0.15);
+    border: 1px solid rgba(200,134,58,0.3);
+    color: var(--ocre);
+    font-size: 0.78rem;
+    padding: 0.4rem 0.9rem;
+    border-radius: 20px;
+    letter-spacing: 0.05em;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 0.4; }
+    50%       { opacity: 1; }
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 640px) {
+
+    /* Hero */
+    .hero h1 { font-size: 2.4rem; }
+    .hero-sub { font-size: 0.92rem; }
+
+    /* Itinerary : grille 2x3 au lieu de 6 en ligne */
+    .itinerary { padding: 3.5rem 1rem 2.5rem; }
+    .itinerary-header h2 { font-size: 1.4rem; }
+    .itinerary-header p { font-size: 0.78rem; }
+
+    .itin-stops {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.4rem 0.5rem;
+      max-width: 340px;
+      margin: 0 auto;
+    }
+
+    /* Cache le chemin ondulé SVG sur mobile (incompatible avec la grille) */
+    .itin-path-wrap { display: none; }
+
+    .itin-stop { width: 100%; }
+    .itin-icon { width: 58px; height: 58px; padding: 10px; }
+    .itin-num { width: 17px; height: 17px; font-size: 0.55rem; top: -4px; right: -4px; }
+    .itin-monument { font-size: 0.63rem; }
+    .itin-label { font-size: 0.62rem; max-width: 80px; }
+
+    /* Tooltips désactivés sur mobile (pas de hover) */
+    .itin-tooltip { display: none; }
+
+    /* Timeline verticale simplifiée */
+    .timeline { padding: 2rem 1rem 4rem; }
+    .timeline::before { left: 20px; }
+    .stop {
+      flex-direction: column !important;
+      padding-left: 48px;
+      gap: 0.8rem;
+      margin-bottom: 3rem;
+    }
+    .stop-dot { left: 20px; top: 1.5rem; }
+    .stop-icon-wrap {
+      flex: none;
+      justify-content: flex-start;
+    }
+    .stop-icon { width: 76px; height: 76px; padding: 13px; }
+    .stop-card {
+      flex: none;
+      border-left: 3px solid var(--ocre) !important;
+      border-right: none !important;
+      padding: 1.2rem 1.3rem;
+    }
+    .stop-monument { font-size: 1rem; }
+    .stop-role { font-size: 0.88rem; }
+    .stop-desc { font-size: 0.83rem; }
+
+    /* Arrival */
+    .arrival { padding: 3.5rem 1.2rem 4rem; }
+    .arrival h2 { font-size: 1.6rem; }
+  }
+
+  @media (max-width: 400px) {
+    .itin-stops { grid-template-columns: repeat(2, 1fr); max-width: 280px; }
+    .itin-icon { width: 50px; height: 50px; padding: 9px; }
+  }
+</style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-tiles"></div>
+  <div class="hero-badge" style="display:inline-flex;align-items:center;gap:0.5rem;">
+    <svg width="12" height="16" viewBox="0 0 12 16" fill="none" stroke="#C8863A" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M6 1 C3 1 1 3.2 1 5.8 C1 9.5 6 15 6 15 C6 15 11 9.5 11 5.8 C11 3.2 9 1 6 1Z"/>
+      <circle cx="6" cy="5.8" r="1.8" fill="none"/>
+    </svg>
+    Carnet de voyage professionnel
+  </div>
+  <h1>Bienvenue à<br><em>Barcelone</em></h1>
+  <p class="hero-sub">
+    Chaque monument raconte une étape. Chaque étape construit un parcours.
+    Voici le CV de <strong style="color:var(--sand)">Carla Bruneau</strong>, en visite guidée.
+  </p>
+  <div class="hero-scroll">
+    <div class="scroll-line"></div>
+    Commencer la visite
+  </div>
+  <svg class="hero-arch" viewBox="0 0 1440 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0 80 Q720 0 1440 80 L1440 80 L0 80Z" fill="#FAF6F0"/>
+  </svg>
+</section>
+
+<!-- ITINERARY MAP -->
+<section class="itinerary" id="itineraire">
+  <div class="itinerary-header">
+    <h2>
+      <svg width="26" height="22" viewBox="0 0 28 24" fill="none" stroke="#B85C38" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="1,3 9,1 19,4 27,2 27,21 19,23 9,20 1,22"/>
+        <line x1="9" y1="1" x2="9" y2="20"/>
+        <line x1="19" y1="4" x2="19" y2="23"/>
+        <path d="M4 8 Q6 10 8 8" stroke-width="0.7"/>
+        <path d="M12 13 Q14 15 16 13" stroke-width="0.7"/>
+        <path d="M21 7 Q23 9 25 7" stroke-width="0.7"/>
+      </svg>
+      L'itinéraire du jour
+    </h2>
+    <p>6 monuments · 6 étapes · un seul parcours — cliquez sur une étape pour y accéder</p>
+  </div>
+
+  <div class="itin-stops" id="itin-stops">
+
+    <!-- Chemin ondulé entre les stops (dessiné en JS) -->
+    <div class="itin-path-wrap">
+      <svg id="itin-path-svg" width="100%" height="40" preserveAspectRatio="none">
+        <path id="itin-path" fill="none" stroke="#C8863A" stroke-width="1.2" stroke-dasharray="5,4" opacity="0.5"/>
+      </svg>
+    </div>
+
+    <!-- STOP 1 -->
+    <a class="itin-stop" href="#stop-1">
+      <div class="itin-icon">
+        <div class="itin-num">1</div>
+        <svg viewBox="0 0 80 80" fill="none" stroke="#B85C38" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="40" y1="6" x2="40" y2="72"/><polygon points="40,6 36,22 44,22" fill="none"/>
+          <rect x="36" y="22" width="8" height="10" fill="none"/>
+          <circle cx="40" cy="36" r="4" fill="none"/>
+          <line x1="40" y1="32" x2="40" y2="40"/><line x1="36" y1="36" x2="44" y2="36"/>
+          <line x1="25" y1="18" x2="25" y2="72"/><polygon points="25,18 22,30 28,30" fill="none"/>
+          <rect x="22" y="30" width="6" height="7" fill="none"/>
+          <line x1="55" y1="18" x2="55" y2="72"/><polygon points="55,18 52,30 58,30" fill="none"/>
+          <rect x="52" y="30" width="6" height="7" fill="none"/>
+          <line x1="13" y1="30" x2="13" y2="72"/><polygon points="13,30 10,40 16,40" fill="none"/>
+          <line x1="67" y1="30" x2="67" y2="72"/><polygon points="67,30 64,40 70,40" fill="none"/>
+          <path d="M8 72 Q40 62 72 72" fill="none"/>
+          <path d="M34 72 Q34 60 40 58 Q46 60 46 72" fill="none"/>
+        </svg>
+      </div>
+      <div class="itin-tooltip"><strong>Master — Neoma Business School</strong>Sept. 2025 → 2026</div>
+      <div class="itin-monument">Sagrada Família</div>
+      <div class="itin-label">Formation</div>
+    </a>
+
+    <!-- STOP 2 -->
+    <a class="itin-stop" href="#stop-2">
+      <div class="itin-icon">
+        <div class="itin-num">2</div>
+        <svg viewBox="0 0 80 80" fill="none" stroke="#B85C38" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M10 55 Q40 20 70 55"/><path d="M16 55 Q40 28 64 55"/>
+          <line x1="10" y1="55" x2="70" y2="55"/>
+          <line x1="10" y1="55" x2="10" y2="68"/><line x1="70" y1="55" x2="70" y2="68"/>
+          <line x1="25" y1="55" x2="25" y2="68"/><line x1="55" y1="55" x2="55" y2="68"/>
+          <line x1="40" y1="55" x2="40" y2="68"/><line x1="7" y1="68" x2="73" y2="68"/>
+          <path d="M22 42 Q40 28 58 42" stroke-dasharray="3,2"/>
+          <circle cx="40" cy="12" r="5" fill="none"/><circle cx="40" cy="12" r="2" fill="#B85C38" stroke="none"/>
+          <line x1="40" y1="6" x2="40" y2="9"/><line x1="40" y1="15" x2="40" y2="18"/>
+          <line x1="34" y1="12" x2="37" y2="12"/><line x1="43" y1="12" x2="46" y2="12"/>
+        </svg>
+      </div>
+      <div class="itin-tooltip"><strong>SEO Content Manager — Optima Media</strong>Barcelone · 6 mois</div>
+      <div class="itin-monument">Park Güell</div>
+      <div class="itin-label">SEO & Digital</div>
+    </a>
+
+    <!-- STOP 3 -->
+    <a class="itin-stop" href="#stop-3">
+      <div class="itin-icon">
+        <div class="itin-num">3</div>
+        <svg viewBox="0 0 80 80" fill="none" stroke="#B85C38" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="40" cy="65" r="3" fill="none"/><circle cx="40" cy="65" r="1.5" fill="#B85C38" stroke="none"/>
+          <line x1="40" y1="65" x2="12" y2="22"/><line x1="40" y1="65" x2="20" y2="16"/>
+          <line x1="40" y1="65" x2="30" y2="12"/><line x1="40" y1="65" x2="40" y2="10"/>
+          <line x1="40" y1="65" x2="50" y2="12"/><line x1="40" y1="65" x2="60" y2="16"/>
+          <line x1="40" y1="65" x2="68" y2="22"/>
+          <path d="M12 22 Q40 8 68 22"/>
+          <path d="M18 36 Q40 24 62 36" stroke-dasharray="2,2"/>
+          <path d="M22 48 Q40 38 58 48" stroke-dasharray="2,2"/>
+          <circle cx="40" cy="20" r="4" fill="none"/><circle cx="40" cy="20" r="1.5" fill="#B85C38" stroke="none"/>
+          <path d="M12 22 Q16 18 20 22 Q24 18 28 22 Q32 18 36 22 Q40 18 44 22 Q48 18 52 22 Q56 18 60 22 Q64 18 68 22"/>
+          <path d="M38 65 Q36 70 35 75 Q38 77 40 76 Q42 77 45 75 Q44 70 42 65"/>
+        </svg>
+      </div>
+      <div class="itin-tooltip"><strong>Community Manager — Feï Paris</strong>Avr. → Juin 2024</div>
+      <div class="itin-monument">Fondation Miró</div>
+      <div class="itin-label">Social Media</div>
+    </a>
+
+    <!-- STOP 4 -->
+    <a class="itin-stop" href="#stop-4">
+      <div class="itin-icon">
+        <div class="itin-num">4</div>
+        <svg viewBox="0 0 80 80" fill="none" stroke="#B85C38" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M10 28 Q18 18 26 24 Q32 18 40 20 Q48 16 56 22 Q64 18 70 26"/>
+          <rect x="14" y="26" width="52" height="44" rx="2" fill="none"/>
+          <line x1="25" y1="26" x2="25" y2="70"/><line x1="40" y1="26" x2="40" y2="70"/><line x1="55" y1="26" x2="55" y2="70"/>
+          <path d="M14 36 Q19 33 25 36 Q32 33 40 36 Q47 33 55 36 Q62 33 66 36"/>
+          <path d="M14 48 Q19 45 25 48 Q32 45 40 48 Q47 45 55 48 Q62 45 66 48"/>
+          <ellipse cx="20" cy="42" rx="3.5" ry="5" fill="none"/>
+          <ellipse cx="32" cy="42" rx="3.5" ry="5" fill="none"/>
+          <ellipse cx="48" cy="42" rx="3.5" ry="5" fill="none"/>
+          <ellipse cx="60" cy="42" rx="3.5" ry="5" fill="none"/>
+          <path d="M32 70 Q32 58 40 56 Q48 58 48 70"/>
+        </svg>
+      </div>
+      <div class="itin-tooltip"><strong>Attachée commerciale — Foncia</strong>Mai → Août 2023</div>
+      <div class="itin-monument">Casa Batlló</div>
+      <div class="itin-label">Immobilier</div>
+    </a>
+
+    <!-- STOP 5 -->
+    <a class="itin-stop" href="#stop-5">
+      <div class="itin-icon">
+        <div class="itin-num">5</div>
+        <svg viewBox="0 0 80 80" fill="none" stroke="#B85C38" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="40" cy="40" r="32" fill="none"/><circle cx="40" cy="40" r="20" fill="none"/>
+          <circle cx="40" cy="40" r="5" fill="none"/><circle cx="40" cy="40" r="2" fill="#B85C38" stroke="none"/>
+          <polygon points="40,8 37,25 40,20 43,25" fill="#B85C38" stroke="none" opacity="0.9"/>
+          <polygon points="40,72 43,55 40,60 37,55" fill="none" stroke="#B85C38"/>
+          <polygon points="72,40 55,37 60,40 55,43" fill="none" stroke="#B85C38"/>
+          <polygon points="8,40 25,43 20,40 25,37" fill="none" stroke="#B85C38"/>
+          <line x1="40" y1="40" x2="63" y2="17" stroke-width="0.7"/>
+          <line x1="40" y1="40" x2="17" y2="17" stroke-width="0.7"/>
+          <line x1="40" y1="40" x2="63" y2="63" stroke-width="0.7"/>
+          <line x1="40" y1="40" x2="17" y2="63" stroke-width="0.7"/>
+        </svg>
+      </div>
+      <div class="itin-tooltip"><strong>Cheffe de secteur Drive — Ferrero</strong>Depuis sept. 2025</div>
+      <div class="itin-monument">Circuit de Catalunya</div>
+      <div class="itin-label">Commerce</div>
+    </a>
+
+    <!-- STOP 6 -->
+    <a class="itin-stop" href="#stop-6">
+      <div class="itin-icon">
+        <div class="itin-num">6</div>
+        <svg viewBox="0 0 80 80" fill="none" stroke="#B85C38" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="40" y1="12" x2="40" y2="52"/>
+          <path d="M40 14 Q56 26 40 48"/><path d="M40 14 Q24 30 40 48"/>
+          <line x1="40" y1="48" x2="56" y2="52"/>
+          <path d="M18 52 Q40 62 62 52"/><path d="M22 56 Q40 66 58 56"/>
+          <line x1="18" y1="52" x2="22" y2="56"/><line x1="62" y1="52" x2="58" y2="56"/>
+          <path d="M8 62 Q14 58 20 62 Q26 66 32 62 Q38 58 44 62 Q50 66 56 62 Q62 58 68 62 Q72 60 74 62"/>
+          <path d="M6 68 Q12 64 18 68 Q24 72 30 68 Q36 64 42 68 Q48 72 54 68 Q60 64 66 68 Q70 66 74 68" stroke-width="0.8"/>
+          <circle cx="65" cy="18" r="5" fill="none" stroke-width="0.8"/>
+          <line x1="65" y1="10" x2="65" y2="13" stroke-width="0.8"/>
+          <line x1="71" y1="12" x2="69" y2="14" stroke-width="0.8"/>
+          <line x1="73" y1="18" x2="70" y2="18" stroke-width="0.8"/>
+        </svg>
+      </div>
+      <div class="itin-tooltip"><strong>GBBA Neoma BS + Casablanca</strong>2021 → 2025</div>
+      <div class="itin-monument">Barceloneta</div>
+      <div class="itin-label">International</div>
+    </a>
+
+  </div>
+</section>
+
+<!-- TIMELINE -->
+<div class="timeline">
+
+  <!-- STOP 1 -->
+  <div class="stop" id="stop-1">
+    <div class="stop-dot"></div>
+    <div class="stop-icon-wrap">
+      <div class="stop-icon">
+        <!-- Sagrada Família : flèches gothiques -->
+        <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="#B85C38" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+          <!-- Tour centrale -->
+          <line x1="40" y1="6" x2="40" y2="72"/>
+          <polygon points="40,6 36,22 44,22" fill="none"/>
+          <rect x="36" y="22" width="8" height="10" fill="none"/>
+          <!-- Fenêtre rosace centrale -->
+          <circle cx="40" cy="36" r="4" fill="none"/>
+          <line x1="40" y1="32" x2="40" y2="40"/>
+          <line x1="36" y1="36" x2="44" y2="36"/>
+          <!-- Tour gauche -->
+          <line x1="25" y1="18" x2="25" y2="72"/>
+          <polygon points="25,18 22,30 28,30" fill="none"/>
+          <rect x="22" y="30" width="6" height="7" fill="none"/>
+          <!-- Tour droite -->
+          <line x1="55" y1="18" x2="55" y2="72"/>
+          <polygon points="55,18 52,30 58,30" fill="none"/>
+          <rect x="52" y="30" width="6" height="7" fill="none"/>
+          <!-- Tour très gauche -->
+          <line x1="13" y1="30" x2="13" y2="72"/>
+          <polygon points="13,30 10,40 16,40" fill="none"/>
+          <!-- Tour très droite -->
+          <line x1="67" y1="30" x2="67" y2="72"/>
+          <polygon points="67,30 64,40 70,40" fill="none"/>
+          <!-- Façade base -->
+          <path d="M8 72 Q40 62 72 72" fill="none"/>
+          <!-- Portail -->
+          <path d="M34 72 Q34 60 40 58 Q46 60 46 72" fill="none"/>
+          <!-- Petits ornements -->
+          <circle cx="25" cy="26" r="1.5" fill="#B85C38" stroke="none"/>
+          <circle cx="55" cy="26" r="1.5" fill="#B85C38" stroke="none"/>
+          <circle cx="40" cy="14" r="1.5" fill="#B85C38" stroke="none"/>
+        </svg>
+      </div>
+    </div>
+    <div class="stop-card">
+      <div class="stop-number">Arrêt n°1</div>
+      <div class="stop-monument">La Sagrada Família</div>
+      <div class="stop-role">Master — Business Development & Grands Comptes</div>
+      <div class="stop-company">Neoma Business School, Paris 75</div>
+      <div class="stop-date">Sept. 2025 → Sept. 2026</div>
+      <div class="stop-desc">
+        Comme la Sagrada Família, ce master est une œuvre en cours de finalisation — ambitieuse, structurée, et destinée à marquer les esprits. Carla y développe une expertise en développement commercial et gestion de comptes stratégiques.
+      </div>
+      <div class="stop-wit">« La plus belle cathédrale est celle qu'on n'a pas encore fini de bâtir. »</div>
+    </div>
+  </div>
+
+  <!-- STOP 2 -->
+  <div class="stop" id="stop-2">
+    <div class="stop-dot"></div>
+    <div class="stop-icon-wrap">
+      <div class="stop-icon">
+        <!-- Park Güell : banc en arc de mosaïque -->
+        <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="#B85C38" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+          <!-- Arc principal du banc -->
+          <path d="M10 55 Q40 20 70 55"/>
+          <!-- Dossier intérieur -->
+          <path d="M16 55 Q40 28 64 55"/>
+          <!-- Assise -->
+          <line x1="10" y1="55" x2="70" y2="55"/>
+          <!-- Supports verticaux -->
+          <line x1="10" y1="55" x2="10" y2="68"/>
+          <line x1="70" y1="55" x2="70" y2="68"/>
+          <line x1="25" y1="55" x2="25" y2="68"/>
+          <line x1="55" y1="55" x2="55" y2="68"/>
+          <line x1="40" y1="55" x2="40" y2="68"/>
+          <!-- Sol -->
+          <line x1="7" y1="68" x2="73" y2="68"/>
+          <!-- Motifs mosaïque sur l'arc -->
+          <path d="M22 42 Q40 28 58 42" stroke-dasharray="3,2"/>
+          <!-- Collines de Barcelone en fond -->
+          <path d="M5 52 Q15 44 25 48 Q35 44 40 46 Q50 40 60 46 Q68 44 75 50" stroke-width="0.7" opacity="0.5"/>
+          <!-- Petits éclats de mosaïque -->
+          <rect x="30" y="36" width="3" height="2" rx="0.5" fill="none"/>
+          <rect x="37" y="31" width="3" height="2" rx="0.5" fill="none"/>
+          <rect x="44" y="34" width="3" height="2" rx="0.5" fill="none"/>
+          <!-- Détail fleur Gaudí -->
+          <circle cx="40" cy="12" r="5" fill="none"/>
+          <circle cx="40" cy="12" r="2" fill="#B85C38" stroke="none"/>
+          <line x1="40" y1="6" x2="40" y2="9"/>
+          <line x1="40" y1="15" x2="40" y2="18"/>
+          <line x1="34" y1="12" x2="37" y2="12"/>
+          <line x1="43" y1="12" x2="46" y2="12"/>
+        </svg>
+      </div>
+    </div>
+    <div class="stop-card">
+      <div class="stop-number">Arrêt n°2</div>
+      <div class="stop-monument">Le Park Güell</div>
+      <div class="stop-role">SEO Content Manager</div>
+      <div class="stop-company">Optima Media, Barcelone</div>
+      <div class="stop-date">Juil. 2024 → Jan. 2025 · 6 mois</div>
+      <div class="stop-desc">
+        Au sommet de la colline barcelonaise, Carla a appris à donner de la hauteur au contenu digital. Rédaction d'articles SEO, optimisation des balises META, analyse de performances via SEMRUSH et Google Analytics, mise en place de stratégies de netlinking.
+      </div>
+      <div class="stop-wit">« Là où Gaudí voyait de la mosaïque, Carla voit des mots-clés. »</div>
+    </div>
+  </div>
+
+  <!-- STOP 3 -->
+  <div class="stop" id="stop-3">
+    <div class="stop-dot"></div>
+    <div class="stop-icon-wrap">
+      <div class="stop-icon">
+        <!-- Éventail espagnol (abanico) style gravure -->
+        <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="#B85C38" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+          <!-- Pivot de l'éventail -->
+          <circle cx="40" cy="65" r="3" fill="none"/>
+          <circle cx="40" cy="65" r="1.5" fill="#B85C38" stroke="none"/>
+          <!-- Branches de l'éventail -->
+          <line x1="40" y1="65" x2="12" y2="22"/>
+          <line x1="40" y1="65" x2="20" y2="16"/>
+          <line x1="40" y1="65" x2="30" y2="12"/>
+          <line x1="40" y1="65" x2="40" y2="10"/>
+          <line x1="40" y1="65" x2="50" y2="12"/>
+          <line x1="40" y1="65" x2="60" y2="16"/>
+          <line x1="40" y1="65" x2="68" y2="22"/>
+          <!-- Arc supérieur du tissu -->
+          <path d="M12 22 Q40 8 68 22"/>
+          <!-- Arc intermédiaire décoratif -->
+          <path d="M18 36 Q40 24 62 36" stroke-dasharray="2,2"/>
+          <path d="M22 48 Q40 38 58 48" stroke-dasharray="2,2"/>
+          <!-- Fleur centrale décorative -->
+          <circle cx="40" cy="20" r="4" fill="none"/>
+          <circle cx="40" cy="20" r="1.5" fill="#B85C38" stroke="none"/>
+          <!-- Dentelle sur le bord supérieur -->
+          <path d="M12 22 Q16 18 20 22 Q24 18 28 22 Q32 18 36 22 Q40 18 44 22 Q48 18 52 22 Q56 18 60 22 Q64 18 68 22"/>
+          <!-- Manche -->
+          <path d="M38 65 Q36 70 35 75 Q38 77 40 76 Q42 77 45 75 Q44 70 42 65"/>
+          <line x1="37" y1="68" x2="43" y2="68"/>
+          <line x1="36" y1="71" x2="44" y2="71"/>
+        </svg>
+      </div>
+    </div>
+    <div class="stop-card">
+      <div class="stop-number">Arrêt n°3</div>
+      <div class="stop-monument">La Fondation Joan Miró</div>
+      <div class="stop-role">Community Manager</div>
+      <div class="stop-company">Feï Paris, Paris 75</div>
+      <div class="stop-date">Avr. 2024 → Juin 2024 · 2 mois</div>
+      <div class="stop-desc">
+        Dans l'esprit créatif de Miró, Carla a imaginé et produit des contenus engageants sur Instagram, Facebook, LinkedIn et TikTok, tout en gérant les commandes en ligne et en animant la communauté de la marque.
+      </div>
+      <div class="stop-wit">« Créer, c'est résister. Poster, c'est exister. »</div>
+    </div>
+  </div>
+
+  <!-- STOP 4 -->
+  <div class="stop" id="stop-4">
+    <div class="stop-dot"></div>
+    <div class="stop-icon-wrap">
+      <div class="stop-icon">
+        <!-- Casa Batlló : façade ondulée style Gaudí -->
+        <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="#B85C38" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+          <!-- Toit dragon (courbe ondulée caractéristique) -->
+          <path d="M10 28 Q18 18 26 24 Q32 18 40 20 Q48 16 56 22 Q64 18 70 26"/>
+          <!-- Crête du toit -->
+          <path d="M22 22 Q26 16 30 20"/>
+          <path d="M36 18 Q40 12 44 16"/>
+          <path d="M52 20 Q56 14 60 18"/>
+          <!-- Corps de la façade -->
+          <rect x="14" y="26" width="52" height="44" rx="2" fill="none"/>
+          <!-- Colonnes osseuses -->
+          <line x1="25" y1="26" x2="25" y2="70"/>
+          <line x1="40" y1="26" x2="40" y2="70"/>
+          <line x1="55" y1="26" x2="55" y2="70"/>
+          <!-- Balcons en fer forgé -->
+          <path d="M14 36 Q19 33 25 36 Q32 33 40 36 Q47 33 55 36 Q62 33 66 36"/>
+          <path d="M14 48 Q19 45 25 48 Q32 45 40 48 Q47 45 55 48 Q62 45 66 48"/>
+          <path d="M14 60 Q19 57 25 60 Q32 57 40 60 Q47 57 55 60 Q62 57 66 60"/>
+          <!-- Fenêtres en forme d'os -->
+          <ellipse cx="20" cy="42" rx="3.5" ry="5" fill="none"/>
+          <ellipse cx="32" cy="42" rx="3.5" ry="5" fill="none"/>
+          <ellipse cx="48" cy="42" rx="3.5" ry="5" fill="none"/>
+          <ellipse cx="60" cy="42" rx="3.5" ry="5" fill="none"/>
+          <!-- Fenêtres étage supérieur -->
+          <ellipse cx="26" cy="31" rx="3" ry="3.5" fill="none"/>
+          <ellipse cx="54" cy="31" rx="3" ry="3.5" fill="none"/>
+          <!-- Porte principale arrondie -->
+          <path d="M32 70 Q32 58 40 56 Q48 58 48 70"/>
+          <!-- Détail mosaïque écailles sur le toit -->
+          <path d="M16 27 Q22 22 28 27" stroke-width="0.7"/>
+          <path d="M28 25 Q34 20 40 24" stroke-width="0.7"/>
+          <path d="M42 23 Q48 18 54 22" stroke-width="0.7"/>
+          <path d="M54 25 Q60 20 66 26" stroke-width="0.7"/>
+        </svg>
+      </div>
+    </div>
+    <div class="stop-card">
+      <div class="stop-number">Arrêt n°4</div>
+      <div class="stop-monument">La Casa Batlló</div>
+      <div class="stop-role">Attachée commerciale</div>
+      <div class="stop-company">Foncia Immo Neuf, Antony 92</div>
+      <div class="stop-date">Mai 2023 → Août 2023 · 3 mois</div>
+      <div class="stop-desc">
+        Aussi séduisante que la façade de Casa Batlló, l'immobilier neuf demande autant de rigueur que d'élégance. Carla a géré les annonces, organisé des visites virtuelles 360°, et assuré un suivi complet des dossiers locataires de A à Z.
+      </div>
+      <div class="stop-wit">« Vendre du rêve, avec les pieds sur terre. »</div>
+    </div>
+  </div>
+
+  <!-- STOP 5 -->
+  <div class="stop" id="stop-5">
+    <div class="stop-dot"></div>
+    <div class="stop-icon-wrap">
+      <div class="stop-icon">
+        <!-- Rose des vents / boussole espagnole élégante -->
+        <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="#B85C38" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+          <!-- Cercle extérieur -->
+          <circle cx="40" cy="40" r="32" fill="none"/>
+          <!-- Cercle intérieur -->
+          <circle cx="40" cy="40" r="20" fill="none"/>
+          <!-- Cercle centre -->
+          <circle cx="40" cy="40" r="5" fill="none"/>
+          <circle cx="40" cy="40" r="2" fill="#B85C38" stroke="none"/>
+          <!-- Flèches cardinales -->
+          <!-- Nord -->
+          <polygon points="40,8 37,25 40,20 43,25" fill="#B85C38" stroke="none" opacity="0.9"/>
+          <!-- Sud -->
+          <polygon points="40,72 43,55 40,60 37,55" fill="none" stroke="#B85C38"/>
+          <!-- Est -->
+          <polygon points="72,40 55,37 60,40 55,43" fill="none" stroke="#B85C38"/>
+          <!-- Ouest -->
+          <polygon points="8,40 25,43 20,40 25,37" fill="none" stroke="#B85C38"/>
+          <!-- Diagonales inter-cardinales -->
+          <line x1="40" y1="40" x2="63" y2="17" stroke-width="0.7"/>
+          <line x1="40" y1="40" x2="17" y2="17" stroke-width="0.7"/>
+          <line x1="40" y1="40" x2="63" y2="63" stroke-width="0.7"/>
+          <line x1="40" y1="40" x2="17" y2="63" stroke-width="0.7"/>
+          <!-- Petits ornements sur le cercle extérieur -->
+          <circle cx="40" cy="8" r="1.5" fill="#B85C38" stroke="none"/>
+          <circle cx="72" cy="40" r="1.5" fill="#B85C38" stroke="none"/>
+          <circle cx="40" cy="72" r="1.5" fill="#B85C38" stroke="none"/>
+          <circle cx="8" cy="40" r="1.5" fill="#B85C38" stroke="none"/>
+          <!-- Graduation -->
+          <line x1="40" y1="20" x2="40" y2="24" stroke-width="0.7"/>
+          <line x1="40" y1="56" x2="40" y2="60" stroke-width="0.7"/>
+          <line x1="20" y1="40" x2="24" y2="40" stroke-width="0.7"/>
+          <line x1="56" y1="40" x2="60" y2="40" stroke-width="0.7"/>
+          <!-- N -->
+          <text x="37" y="16" font-size="5" fill="#B85C38" stroke="none" font-family="Playfair Display, serif">N</text>
+        </svg>
+      </div>
+    </div>
+    <div class="stop-card">
+      <div class="stop-number">Arrêt n°5</div>
+      <div class="stop-monument">Le Circuit de Catalunya</div>
+      <div class="stop-role">Cheffe de secteur Drive (alternance)</div>
+      <div class="stop-company">Ferrero, Massy</div>
+      <div class="stop-date">Depuis sept. 2025</div>
+      <div class="stop-desc">
+        Sur ce circuit, chaque décision compte et la vitesse d'exécution fait la différence. En tant que cheffe de secteur drive, Carla pilote le développement commercial chez Ferrero, gérant la relation client et optimisant la présence en rayon.
+      </div>
+      <div class="stop-wit">« La pole position, ça se mérite sur le terrain. »</div>
+    </div>
+  </div>
+
+  <!-- STOP 6 -->
+  <div class="stop" id="stop-6">
+    <div class="stop-dot"></div>
+    <div class="stop-icon-wrap">
+      <div class="stop-icon">
+        <!-- Barceloneta : voilier et vagues fines -->
+        <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="#B85C38" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+          <!-- Mât -->
+          <line x1="40" y1="12" x2="40" y2="52"/>
+          <!-- Grande voile -->
+          <path d="M40 14 Q56 26 40 48"/>
+          <!-- Petite voile avant -->
+          <path d="M40 14 Q24 30 40 48"/>
+          <!-- Bôme -->
+          <line x1="40" y1="48" x2="56" y2="52"/>
+          <!-- Coque -->
+          <path d="M18 52 Q40 62 62 52"/>
+          <path d="M22 56 Q40 66 58 56"/>
+          <!-- Proue -->
+          <line x1="18" y1="52" x2="22" y2="56"/>
+          <line x1="62" y1="52" x2="58" y2="56"/>
+          <!-- Ligne de flottaison -->
+          <line x1="20" y1="54" x2="60" y2="54" stroke-dasharray="2,2" stroke-width="0.7"/>
+          <!-- Vagues -->
+          <path d="M8 62 Q14 58 20 62 Q26 66 32 62 Q38 58 44 62 Q50 66 56 62 Q62 58 68 62 Q72 60 74 62"/>
+          <path d="M6 68 Q12 64 18 68 Q24 72 30 68 Q36 64 42 68 Q48 72 54 68 Q60 64 66 68 Q70 66 74 68" stroke-width="0.8"/>
+          <!-- Petite vague légère -->
+          <path d="M10 74 Q20 71 30 74 Q40 77 50 74 Q60 71 70 74" stroke-width="0.6" opacity="0.6"/>
+          <!-- Bannière sur le mât -->
+          <path d="M40 12 Q46 15 40 18" fill="none"/>
+          <!-- Soleil discret -->
+          <circle cx="65" cy="18" r="5" fill="none" stroke-width="0.8"/>
+          <line x1="65" y1="10" x2="65" y2="13" stroke-width="0.8"/>
+          <line x1="71" y1="12" x2="69" y2="14" stroke-width="0.8"/>
+          <line x1="73" y1="18" x2="70" y2="18" stroke-width="0.8"/>
+        </svg>
+      </div>
+    </div>
+    <div class="stop-card">
+      <div class="stop-number">Arrêt n°6</div>
+      <div class="stop-monument">La Barceloneta</div>
+      <div class="stop-role">GBBA — English Track</div>
+      <div class="stop-company">Neoma BS, Rouen · et échange à Casablanca</div>
+      <div class="stop-date">2021 → 2025</div>
+      <div class="stop-desc">
+        Comme la plage de Barceloneta, ce parcours est ouvert sur le monde. Management, finance, marketing, géopolitique… et un semestre à l'ISCAE de Casablanca pour élargir encore les horizons. L'international, c'est une seconde nature.
+      </div>
+      <div class="stop-wit">« Les meilleures vagues se trouvent loin du port. »</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ARRIVAL -->
+<section class="arrival">
+  <div class="arrival-tiles"></div>
+  <h2 style="display:inline-flex;align-items:center;gap:0.6rem;justify-content:center;">
+    <svg width="26" height="26" viewBox="0 0 26 26" fill="none" stroke="#C8863A" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+      <polygon points="13,2 15.5,9.5 23,9.5 17,14.5 19.5,22 13,17.5 6.5,22 9,14.5 3,9.5 10.5,9.5" fill="none"/>
+      <circle cx="13" cy="13" r="3" fill="#C8863A" stroke="none" opacity="0.7"/>
+    </svg>
+    Fin du parcours
+  </h2>
+  <p>
+    De Barcelone à Paris, de Casablanca à Massy — Carla Bruneau trace un itinéraire ambitieux,
+    à l'intersection du marketing digital, du commerce et de l'international.
+    La visite guidée est terminée. Le parcours, lui, continue.
+  </p>
+  <div class="tags">
+    <span class="tag">SEO & Content</span>
+    <span class="tag">Community Management</span>
+    <span class="tag">Google Analytics</span>
+    <span class="tag">SEMRUSH</span>
+    <span class="tag">Commercial B2C</span>
+    <span class="tag">Immobilier</span>
+    <span class="tag">Grande Distribution</span>
+    <span class="tag">International</span>
+    <span class="tag">Pack Office</span>
+    <span class="tag">Canva</span>
+    <span class="tag">Réseaux sociaux</span>
+    <span class="tag">Bilingue FR/EN</span>
+  </div>
+</section>
+
+<script>
+  // Progress bar
+  window.addEventListener('scroll', () => {
+    const scrollTop = window.scrollY;
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const progress = (scrollTop / docHeight) * 100;
+    document.getElementById('progress-bar').style.width = progress + '%';
+  });
+
+  // Reveal stops on scroll
+  const stops = document.querySelectorAll('.stop');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) entry.target.classList.add('visible');
+    });
+  }, { threshold: 0.15 });
+  stops.forEach(s => observer.observe(s));
+
+  // Draw wavy path between itin stops
+  function drawItinPath() {
+    const wrap = document.querySelector('.itin-path-wrap');
+    const icons = document.querySelectorAll('.itin-stop .itin-icon');
+    const svg = document.getElementById('itin-path');
+    if (!wrap || !icons.length || !svg) return;
+
+    const wrapRect = wrap.getBoundingClientRect();
+    const points = [];
+    icons.forEach(icon => {
+      const r = icon.getBoundingClientRect();
+      const cx = r.left + r.width / 2 - wrapRect.left;
+      points.push(cx);
+    });
+
+    // Build wavy SVG path through centers
+    let d = `M ${points[0]} 20`;
+    for (let i = 1; i < points.length; i++) {
+      const prev = points[i - 1];
+      const curr = points[i];
+      const mid = (prev + curr) / 2;
+      const wave = i % 2 === 0 ? 8 : -8;
+      d += ` C ${mid} ${20 + wave}, ${mid} ${20 + wave}, ${curr} 20`;
+    }
+    svg.setAttribute('d', d);
+  }
+
+  // Smooth scroll for itin links
+  document.querySelectorAll('.itin-stop').forEach(link => {
+    link.addEventListener('click', e => {
+      e.preventDefault();
+      const target = document.querySelector(link.getAttribute('href'));
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+  });
+
+  // Active highlight on scroll
+  const allStops = document.querySelectorAll('.stop[id]');
+  const itinLinks = document.querySelectorAll('.itin-stop');
+
+  window.addEventListener('scroll', () => {
+    let current = '';
+    allStops.forEach(stop => {
+      const rect = stop.getBoundingClientRect();
+      if (rect.top < window.innerHeight * 0.6) current = stop.id;
+    });
+    itinLinks.forEach(link => {
+      const href = link.getAttribute('href').replace('#', '');
+      if (href === current) {
+        link.querySelector('.itin-icon').style.borderColor = 'var(--terracotta)';
+        link.querySelector('.itin-num').style.background = 'var(--terracotta)';
+      } else {
+        link.querySelector('.itin-icon').style.borderColor = '';
+        link.querySelector('.itin-num').style.background = '';
+      }
+    });
+  });
+
+  window.addEventListener('load', drawItinPath);
+  window.addEventListener('resize', drawItinPath);
+</script>
+</body>
+</html>
