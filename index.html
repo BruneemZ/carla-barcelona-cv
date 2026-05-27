@@ -460,7 +460,200 @@
     font-style: italic;
   }
 
-  /* ── ARRIVAL ── */
+  /* ── TRANSPORT ── */
+  .transport {
+    background: var(--deep);
+    padding: 5rem 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .transport::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    opacity: 0.05;
+    background-image:
+      repeating-linear-gradient(45deg, var(--ocre) 0, var(--ocre) 1px, transparent 0, transparent 50%),
+      repeating-linear-gradient(-45deg, var(--ocre) 0, var(--ocre) 1px, transparent 0, transparent 50%);
+    background-size: 28px 28px;
+  }
+
+  .transport-inner {
+    max-width: 800px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  .transport-header {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+
+  .transport-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    color: var(--ocre);
+    margin-bottom: 0.5rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .transport-header p {
+    color: var(--muted);
+    font-size: 0.88rem;
+    font-style: italic;
+  }
+
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.2rem;
+  }
+
+  .skill-card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(200,134,58,0.2);
+    border-radius: 14px;
+    padding: 1.4rem 1.6rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    transition: background 0.25s, border-color 0.25s;
+  }
+
+  .skill-card:hover {
+    background: rgba(200,134,58,0.08);
+    border-color: rgba(200,134,58,0.4);
+  }
+
+  .skill-icon {
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(200,134,58,0.1);
+    border-radius: 50%;
+    padding: 10px;
+  }
+
+  .skill-icon svg { width: 100%; height: 100%; }
+
+  .skill-body h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    color: var(--sand);
+    margin-bottom: 0.3rem;
+    font-style: italic;
+  }
+
+  .skill-body p {
+    font-size: 0.8rem;
+    color: var(--muted);
+    line-height: 1.55;
+  }
+
+  /* ── PAUSE ── */
+  .pause {
+    background: #fff8f0;
+    padding: 5rem 2rem;
+    border-top: 1px solid rgba(200,134,58,0.15);
+    border-bottom: 1px solid rgba(200,134,58,0.15);
+  }
+
+  .pause-inner {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .pause-header {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+
+  .pause-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    color: var(--terracotta);
+    margin-bottom: 0.5rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .pause-header p {
+    color: var(--muted);
+    font-size: 0.88rem;
+    font-style: italic;
+  }
+
+  .pause-cards {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.2rem;
+  }
+
+  .pause-card {
+    background: white;
+    border-radius: 14px;
+    padding: 1.5rem 1.6rem;
+    border: 1px solid rgba(200,134,58,0.2);
+    box-shadow: 2px 4px 16px rgba(0,0,0,0.05);
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    transition: transform 0.25s, box-shadow 0.25s;
+  }
+
+  .pause-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 4px 8px 24px rgba(0,0,0,0.09);
+  }
+
+  .pause-icon {
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+    background: var(--sand);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 11px;
+  }
+
+  .pause-icon svg { width: 100%; height: 100%; }
+
+  .pause-body h3 {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 0.15rem;
+  }
+
+  .pause-body .pause-co {
+    font-size: 0.73rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 0.5rem;
+  }
+
+  .pause-body p {
+    font-size: 0.8rem;
+    color: #5a4d3e;
+    line-height: 1.55;
+  }
+
+  @media (max-width: 640px) {
+    .skills-grid { grid-template-columns: 1fr; }
+    .pause-cards { grid-template-columns: 1fr; }
+    .transport { padding: 3.5rem 1.2rem; }
+    .pause { padding: 3.5rem 1.2rem; }
+  }
   .arrival {
     text-align: center;
     padding: 5rem 2rem 6rem;
@@ -883,13 +1076,13 @@
     <div class="stop-card">
       <div class="stop-number">Arrêt n°2</div>
       <div class="stop-monument">Le Park Güell</div>
-      <div class="stop-role">SEO Content Manager</div>
-      <div class="stop-company">Optima Media, Barcelone</div>
-      <div class="stop-date">Juil. 2024 → Jan. 2025 · 6 mois</div>
+      <div class="stop-role">GBBA — English Track</div>
+      <div class="stop-company">Neoma BS, Rouen · échange à Casablanca</div>
+      <div class="stop-date">2021 → 2025</div>
       <div class="stop-desc">
-        Au sommet de la colline barcelonaise, Carla a appris à donner de la hauteur au contenu digital. Rédaction d'articles SEO, optimisation des balises META, analyse de performances via SEMRUSH et Google Analytics, mise en place de stratégies de netlinking.
+        Comme les sentiers du Park Güell qui s'ouvrent sur toute la ville, ce parcours grande école offre une vue panoramique sur le monde des affaires. Management, finance, marketing, géopolitique… et un semestre à l'ISCAE de Casablanca pour élargir encore les horizons.
       </div>
-      <div class="stop-wit">« Là où Gaudí voyait de la mosaïque, Carla voit des mots-clés. »</div>
+      <div class="stop-wit">« Les meilleures vagues se trouvent loin du port. »</div>
     </div>
   </div>
 
@@ -931,13 +1124,13 @@
     <div class="stop-card">
       <div class="stop-number">Arrêt n°3</div>
       <div class="stop-monument">La Fondation Joan Miró</div>
-      <div class="stop-role">Community Manager</div>
-      <div class="stop-company">Feï Paris, Paris 75</div>
-      <div class="stop-date">Avr. 2024 → Juin 2024 · 2 mois</div>
+      <div class="stop-role">Attachée commerciale</div>
+      <div class="stop-company">Foncia Immo Neuf, Antony 92</div>
+      <div class="stop-date">Mai 2023 → Août 2023 · 3 mois</div>
       <div class="stop-desc">
-        Dans l'esprit créatif de Miró, Carla a imaginé et produit des contenus engageants sur Instagram, Facebook, LinkedIn et TikTok, tout en gérant les commandes en ligne et en animant la communauté de la marque.
+        Aussi séduisante que la façade de la Fondation Miró, l'immobilier neuf demande autant de rigueur que d'élégance. Carla a géré les annonces, organisé des visites virtuelles 360°, et assuré un suivi complet des dossiers locataires de A à Z.
       </div>
-      <div class="stop-wit">« Créer, c'est résister. Poster, c'est exister. »</div>
+      <div class="stop-wit">« Vendre du rêve, avec les pieds sur terre. »</div>
     </div>
   </div>
 
@@ -985,13 +1178,13 @@
     <div class="stop-card">
       <div class="stop-number">Arrêt n°4</div>
       <div class="stop-monument">La Casa Batlló</div>
-      <div class="stop-role">Attachée commerciale</div>
-      <div class="stop-company">Foncia Immo Neuf, Antony 92</div>
-      <div class="stop-date">Mai 2023 → Août 2023 · 3 mois</div>
+      <div class="stop-role">Community Manager</div>
+      <div class="stop-company">Feï Paris, Paris 75</div>
+      <div class="stop-date">Avr. 2024 → Juin 2024 · 2 mois</div>
       <div class="stop-desc">
-        Aussi séduisante que la façade de Casa Batlló, l'immobilier neuf demande autant de rigueur que d'élégance. Carla a géré les annonces, organisé des visites virtuelles 360°, et assuré un suivi complet des dossiers locataires de A à Z.
+        Comme la façade ondulée de Casa Batlló qui capte tous les regards, Carla a su capter l'attention sur les réseaux. Création de contenus engageants sur Instagram, Facebook, LinkedIn et TikTok, gestion des commandes en ligne et animation de la communauté de la marque.
       </div>
-      <div class="stop-wit">« Vendre du rêve, avec les pieds sur terre. »</div>
+      <div class="stop-wit">« Créer, c'est résister. Poster, c'est exister. »</div>
     </div>
   </div>
 
@@ -1041,13 +1234,13 @@
     <div class="stop-card">
       <div class="stop-number">Arrêt n°5</div>
       <div class="stop-monument">Le Circuit de Catalunya</div>
-      <div class="stop-role">Cheffe de secteur Drive (alternance)</div>
-      <div class="stop-company">Ferrero, Massy</div>
-      <div class="stop-date">Depuis sept. 2025</div>
+      <div class="stop-role">SEO Content Manager</div>
+      <div class="stop-company">Optima Media, Barcelone 🇪🇸</div>
+      <div class="stop-date">Juil. 2024 → Jan. 2025 · 6 mois</div>
       <div class="stop-desc">
-        Sur ce circuit, chaque décision compte et la vitesse d'exécution fait la différence. En tant que cheffe de secteur drive, Carla pilote le développement commercial chez Ferrero, gérant la relation client et optimisant la présence en rayon.
+        Sur ce circuit, la vitesse et la précision font la différence. Carla a optimisé le contenu digital en rythme : rédaction d'articles SEO, optimisation des balises META, analyse de performances via SEMRUSH et Google Analytics, stratégie de netlinking.
       </div>
-      <div class="stop-wit">« La pole position, ça se mérite sur le terrain. »</div>
+      <div class="stop-wit">« Là où Gaudí voyait de la mosaïque, Carla voit des mots-clés. »</div>
     </div>
   </div>
 
@@ -1092,17 +1285,168 @@
     <div class="stop-card">
       <div class="stop-number">Arrêt n°6</div>
       <div class="stop-monument">La Barceloneta</div>
-      <div class="stop-role">GBBA — English Track</div>
-      <div class="stop-company">Neoma BS, Rouen · et échange à Casablanca</div>
-      <div class="stop-date">2021 → 2025</div>
+      <div class="stop-role">Cheffe de secteur Drive (alternance)</div>
+      <div class="stop-company">Ferrero, Massy</div>
+      <div class="stop-date">Depuis sept. 2025</div>
       <div class="stop-desc">
-        Comme la plage de Barceloneta, ce parcours est ouvert sur le monde. Management, finance, marketing, géopolitique… et un semestre à l'ISCAE de Casablanca pour élargir encore les horizons. L'international, c'est une seconde nature.
+        Comme la Barceloneta où tout se passe en plein air et à grande vitesse, ici aussi l'action est au cœur du poste. En tant que cheffe de secteur drive, Carla pilote le développement commercial chez Ferrero, gérant la relation client et optimisant la présence des références Ferrero sur les drives.
       </div>
-      <div class="stop-wit">« Les meilleures vagues se trouvent loin du port. »</div>
+      <div class="stop-wit">« La pole position, ça se mérite sur le terrain. »</div>
     </div>
   </div>
 
 </div>
+
+<!-- TRANSPORT : comment se rendre aux étapes -->
+<section class="transport">
+  <div class="transport-inner">
+    <div class="transport-header">
+      <h2>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#C8863A" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/>
+          <polygon points="12,5 9,10 15,10" fill="#C8863A" stroke="none"/>
+          <line x1="12" y1="10" x2="12" y2="19"/>
+          <line x1="9" y1="16" x2="15" y2="16"/>
+        </svg>
+        Comment se rendre à ces étapes ?
+      </h2>
+      <p>Les modes de transport qui font avancer Carla à chaque arrêt</p>
+    </div>
+    <div class="skills-grid">
+
+      <div class="skill-card">
+        <div class="skill-icon">
+          <svg viewBox="0 0 40 40" fill="none" stroke="#C8863A" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+            <!-- Étoile / boussole intérieure -->
+            <circle cx="20" cy="20" r="14"/>
+            <polygon points="20,6 18,16 20,13 22,16" fill="#C8863A" stroke="none"/>
+            <polygon points="20,34 22,24 20,27 18,24" fill="none"/>
+            <line x1="20" y1="20" x2="32" y2="20" stroke-width="0.8"/>
+            <line x1="20" y1="20" x2="8" y2="20" stroke-width="0.8"/>
+            <circle cx="20" cy="20" r="2.5" fill="none"/>
+            <circle cx="20" cy="20" r="1" fill="#C8863A" stroke="none"/>
+          </svg>
+        </div>
+        <div class="skill-body">
+          <h3>Rigoureuse</h3>
+          <p>Chaque mission est menée avec méthode et précision — aucun détail ne passe à travers les mailles.</p>
+        </div>
+      </div>
+
+      <div class="skill-card">
+        <div class="skill-icon">
+          <svg viewBox="0 0 40 40" fill="none" stroke="#C8863A" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+            <!-- Voilier seul, symbole d'autonomie -->
+            <line x1="20" y1="6" x2="20" y2="26"/>
+            <path d="M20 7 Q28 13 20 24"/>
+            <path d="M20 7 Q12 15 20 24"/>
+            <path d="M9 26 Q20 31 31 26"/>
+            <path d="M4 31 Q10 29 16 31 Q22 33 28 31 Q33 29 36 31"/>
+          </svg>
+        </div>
+        <div class="skill-body">
+          <h3>Autonome</h3>
+          <p>Capable de naviguer seule, de prendre des décisions et d'avancer sans avoir besoin d'un cap permanent.</p>
+        </div>
+      </div>
+
+      <div class="skill-card">
+        <div class="skill-icon">
+          <svg viewBox="0 0 40 40" fill="none" stroke="#C8863A" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+            <!-- Trois personnages stylisés -->
+            <circle cx="12" cy="11" r="4"/>
+            <path d="M6 26 Q6 19 12 19 Q18 19 18 26"/>
+            <circle cx="28" cy="11" r="4"/>
+            <path d="M22 26 Q22 19 28 19 Q34 19 34 26"/>
+            <line x1="19" y1="16" x2="21" y2="16" stroke-width="1.5"/>
+          </svg>
+        </div>
+        <div class="skill-body">
+          <h3>Travail d'équipe</h3>
+          <p>À l'aise dans les collectifs, Carla sait fédérer, collaborer et faire avancer les projets ensemble.</p>
+        </div>
+      </div>
+
+      <div class="skill-card">
+        <div class="skill-icon">
+          <svg viewBox="0 0 40 40" fill="none" stroke="#C8863A" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+            <!-- Montagne / persévérance -->
+            <path d="M4 32 L14 12 L20 22 L26 14 L36 32Z"/>
+            <path d="M22 10 Q24 7 26 10" stroke-width="0.8"/>
+            <line x1="26" y1="6" x2="26" y2="9" stroke-width="0.8"/>
+            <!-- Drapeau au sommet -->
+            <line x1="26" y1="14" x2="26" y2="8"/>
+            <path d="M26 8 Q30 10 26 12"/>
+          </svg>
+        </div>
+        <div class="skill-body">
+          <h3>Persévérante</h3>
+          <p>Face aux obstacles, Carla continue d'avancer. Chaque difficulté est une marche de plus vers le sommet.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- PAUSE : jobs étudiants -->
+<section class="pause">
+  <div class="pause-inner">
+    <div class="pause-header">
+      <h2>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#B85C38" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+          <!-- Tasse de café -->
+          <path d="M4 6 Q4 18 12 18 Q20 18 20 6Z"/>
+          <path d="M20 9 Q24 9 24 12 Q24 15 20 15"/>
+          <line x1="8" y1="20" x2="16" y2="20"/>
+          <path d="M8 4 Q9 2 10 4"/>
+          <path d="M12 3 Q13 1 14 3"/>
+        </svg>
+        Pause shopping ou repas
+      </h2>
+      <p>Les jobs étudiants qui ont forgé le sens du service et de l'opérationnel</p>
+    </div>
+    <div class="pause-cards">
+
+      <div class="pause-card">
+        <div class="pause-icon">
+          <svg viewBox="0 0 40 40" fill="none" stroke="#B85C38" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+            <!-- Chariot de supermarché -->
+            <path d="M6 10 L10 10 L14 24 L30 24 L32 14 L10 14"/>
+            <circle cx="16" cy="28" r="2.5"/>
+            <circle cx="27" cy="28" r="2.5"/>
+            <line x1="6" y1="10" x2="4" y2="6"/>
+            <line x1="18" y1="18" x2="18" y2="24"/>
+            <line x1="23" y1="17" x2="23" y2="24"/>
+          </svg>
+        </div>
+        <div class="pause-body">
+          <h3>Employée polyvalente</h3>
+          <div class="pause-co">Carrefour Market, Châtenay-Malabry 92 · Fév.–Août 2022</div>
+          <p>Hôtesse de caisse, mise en rayon, facing produits et gestion du rayon boulangerie — le terrain dans toutes ses dimensions.</p>
+        </div>
+      </div>
+
+      <div class="pause-card">
+        <div class="pause-icon">
+          <svg viewBox="0 0 40 40" fill="none" stroke="#B85C38" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+            <!-- Badge accueil / réceptionniste -->
+            <rect x="8" y="6" width="24" height="28" rx="3"/>
+            <circle cx="20" cy="16" r="5"/>
+            <path d="M10 34 Q10 26 20 26 Q30 26 30 34"/>
+            <line x1="13" y1="10" x2="27" y2="10" stroke-width="0.7"/>
+          </svg>
+        </div>
+        <div class="pause-body">
+          <h3>Hôtesse d'accueil</h3>
+          <div class="pause-co">Penelope, Île-de-France · Avr.–Août 2025</div>
+          <p>Accueil, orientation et représentation de marques — le sens du service et la première impression soignée à chaque interaction.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
 
 <!-- ARRIVAL -->
 <section class="arrival">
